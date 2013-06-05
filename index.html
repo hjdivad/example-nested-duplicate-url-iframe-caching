@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title></title>
+<script>
+var depth = 0,
+    win = window;
+
+for(; win !== window.top; win = win.parent, ++depth);
+
+
+
+function createNestedWindow() {
+  document.body.appendChild(document.createTextNode(depth));
+
+  if (depth < 5) {
+    var iframe = document.createElement('iframe');
+    iframe.addEventListener('load', function () {
+      /**
+        Switch this to alternate src/location approaches.
+
+        With location, we get expected results.  With src, we get unexpected bad
+        results that vary by browser.
+
+        In chrome, 2 iframes are created, one of which loads.
+        In IE10 and firefox, 1 iframe is created and does not load.
+      */
+      var useLocation = false;
+      if (useLocation) {
+        if (iframe.contentWindow.location.href != location.href) {
+          iframe.contentWindow.location.href = location.href;
+        }
+      } else {
+        if (iframe.src != location.href) {
+          iframe.setAttribute('src', location.href);
+        }
+      }
+    });
+    document.body.appendChild(iframe);
+  }
+}
+</script>
+</head>
+<body onload="createNestedWindow()"></body>
+</html>
